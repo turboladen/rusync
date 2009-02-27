@@ -1,0 +1,15 @@
+-v verbose
+-r recursive
+-n dry run
+--delete delete extraneous files on server
+-z compres file data during the transfer
+--stats give some file transfer stats
+--progress show progress during transfer
+--list-only list the files instead instead of copying them
+--iconv=utf8mac
+--protect-args sends filenames and options to rsync without remote shell interpreation.  Spaces are not split in names and non-wildcard special characters are not translated
+
+
+
+rsync -vrz --stats --progress --iconv=UTF8-MAC /Volumes/My\ Book/Music/iTunes/113 steve@192.168.10.3::iTunes
+

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Komodo Project File - DO NOT EDIT -->
+<project id="931cfda1-da57-3c48-8104-1945222de115" kpf_version="4" name="RuSync.kpf">
+<preference-set idref="931cfda1-da57-3c48-8104-1945222de115">
+  <boolean id="import_live">1</boolean>
+</preference-set>
+</project>
