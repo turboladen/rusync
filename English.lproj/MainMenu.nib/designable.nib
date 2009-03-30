@@ -8,8 +8,8 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="368"/>
 			<integer value="29"/>
+			<integer value="368"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -911,7 +911,7 @@
 													<string>WebURLsWithTitlesPboardType</string>
 												</object>
 											</object>
-											<string key="NSFrameSize">{508, 14}</string>
+											<string key="NSFrameSize">{0, 0}</string>
 											<reference key="NSSuperview" ref="895217267"/>
 											<object class="NSTextContainer" key="NSTextContainer" id="577169299">
 												<object class="NSLayoutManager" key="NSLayoutManager">
@@ -929,11 +929,11 @@
 													<nil key="NSDelegate"/>
 												</object>
 												<reference key="NSTextView" ref="274259070"/>
-												<double key="NSWidth">5.080000e+02</double>
+												<double key="NSWidth">0.000000e+00</double>
 												<int key="NSTCFlags">1</int>
 											</object>
 											<object class="NSTextViewSharedData" key="NSSharedData">
-												<int key="NSFlags">403751</int>
+												<int key="NSFlags">403747</int>
 												<object class="NSColor" key="NSBackgroundColor" id="560117760">
 													<int key="NSColorSpace">1</int>
 													<bytes key="NSRGB">MSAxIDEAA</bytes>
@@ -986,7 +986,6 @@
 											</object>
 											<int key="NSTVFlags">7</int>
 											<string key="NSMaxSize">{1033, 1e+07}</string>
-											<string key="NSMinize">{223, 0}</string>
 											<nil key="NSDelegate"/>
 										</object>
 									</object>
@@ -1102,8 +1101,8 @@
 			<object class="NSCustomObject" id="959166874">
 				<string key="NSClassName">RsyncController</string>
 			</object>
-			<object class="NSCustomObject" id="851730996">
-				<string key="NSClassName">Rsync</string>
+			<object class="NSCustomObject" id="85682616">
+				<string key="NSClassName">CommandController</string>
 			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -1407,38 +1406,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">rsync</string>
-						<reference key="source" ref="959166874"/>
-						<reference key="destination" ref="851730996"/>
-					</object>
-					<int key="connectionID">375</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">checkbox</string>
-						<reference key="source" ref="959166874"/>
-						<reference key="destination" ref="983363366"/>
-					</object>
-					<int key="connectionID">397</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">rsync_module</string>
-						<reference key="source" ref="959166874"/>
-						<reference key="destination" ref="86137980"/>
-					</object>
-					<int key="connectionID">398</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">source_dir</string>
-						<reference key="source" ref="959166874"/>
-						<reference key="destination" ref="652597020"/>
-					</object>
-					<int key="connectionID">400</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">results</string>
 						<reference key="source" ref="959166874"/>
 						<reference key="destination" ref="274259070"/>
@@ -1446,12 +1413,44 @@
 					<int key="connectionID">403</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">dryrun_checkbox</string>
+						<reference key="source" ref="85682616"/>
+						<reference key="destination" ref="983363366"/>
+					</object>
+					<int key="connectionID">420</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">server_module</string>
+						<reference key="source" ref="85682616"/>
+						<reference key="destination" ref="86137980"/>
+					</object>
+					<int key="connectionID">421</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">source_dir</string>
+						<reference key="source" ref="85682616"/>
+						<reference key="destination" ref="652597020"/>
+					</object>
+					<int key="connectionID">422</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">rsync_controller</string>
+						<reference key="source" ref="85682616"/>
+						<reference key="destination" ref="959166874"/>
+					</object>
+					<int key="connectionID">424</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">doRsync:</string>
-						<reference key="source" ref="959166874"/>
+						<string key="label">sync:</string>
+						<reference key="source" ref="85682616"/>
 						<reference key="destination" ref="892901285"/>
 					</object>
-					<int key="connectionID">404</int>
+					<int key="connectionID">425</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2085,11 +2084,6 @@
 						<reference key="parent" ref="1049"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">374</int>
-						<reference key="object" ref="851730996"/>
-						<reference key="parent" ref="1049"/>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">376</int>
 						<reference key="object" ref="652597020"/>
 						<object class="NSMutableArray" key="children">
@@ -2212,6 +2206,11 @@
 						<int key="objectID">396</int>
 						<reference key="object" ref="201229767"/>
 						<reference key="parent" ref="983363366"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">418</int>
+						<reference key="object" ref="85682616"/>
+						<reference key="parent" ref="1049"/>
 					</object>
 				</object>
 			</object>
@@ -2366,7 +2365,6 @@
 					<string>367.editorWindowContentRectSynchronizationRect</string>
 					<string>368.IBPluginDependency</string>
 					<string>373.IBPluginDependency</string>
-					<string>374.IBPluginDependency</string>
 					<string>376.IBPluginDependency</string>
 					<string>377.IBPluginDependency</string>
 					<string>378.IBPluginDependency</string>
@@ -2385,6 +2383,7 @@
 					<string>394.IBPluginDependency</string>
 					<string>395.IBPluginDependency</string>
 					<string>396.IBPluginDependency</string>
+					<string>418.IBPluginDependency</string>
 					<string>5.IBPluginDependency</string>
 					<string>5.ImportedFromIB2</string>
 					<string>56.IBPluginDependency</string>
@@ -2564,8 +2563,8 @@
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{324, 161}, {577, 760}}</string>
-					<string>{{324, 161}, {577, 760}}</string>
+					<string>{{95, 147}, {577, 760}}</string>
+					<string>{{95, 147}, {577, 760}}</string>
 					<reference ref="9"/>
 					<string>{{517, 575}, {480, 270}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2646,21 +2645,38 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">409</int>
+			<int key="maxID">425</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
-					<string key="className">Rsync</string>
+					<string key="className">CommandController</string>
 					<string key="superclassName">NSObject</string>
-					<object class="NSMutableDictionary" key="outlets">
-						<string key="NS.key.0">rsync_controller</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">sync:</string>
 						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSMutableArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>dryrun_checkbox</string>
+							<string>rsync_controller</string>
+							<string>server_module</string>
+							<string>source_dir</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Rsync.rb</string>
+						<string key="minorKey">CommandController.rb</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -2671,23 +2687,8 @@
 						<string key="NS.object.0">id</string>
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>checkbox</string>
-							<string>results</string>
-							<string>rsync</string>
-							<string>rsync_module</string>
-							<string>source_dir</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-						</object>
+						<string key="NS.key.0">results</string>
+						<string key="NS.object.0">id</string>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
