@@ -1,6 +1,6 @@
 #
 #  RsyncController.rb
-#  MyRsync
+#  RuRsync
 #
 #  Created by Steve Loveless on 2/16/09.
 #  Copyright (c) 2009 Pelco. All rights reserved.
@@ -9,57 +9,47 @@
 require 'osx/cocoa'
 
 class RsyncController < OSX::NSObject
-  ib_outlets :source_dir, :rsync_module, :rsync, :results, :checkbox
+  # Class outlets
+  ib_outlets :results
+  attr_reader :task, :nc
   
-  #TODO: Add timestamp for start, finish, calculated duration
-  #TODO: make scrollbar stay at bottom as new data is coming in
-  #TODO: make text not wrap
-  #TODO: UI allows use of $> rsync steve@192.168.10.3:: to get list of modules
-  #TODO: use --dry-run instead of -n
-  #TODO: consider using --list-only instead of --dry-run
-  #TODO: capture Exit Values
+  #TODO: capture rsync Exit Values
   #TODO: need to handle error conditions (conn failure)
   #TODO: consider using --timeout=TIMEOUT in case the connection is dropped
-  #TODO: consider using --contimeout for bad connection initiations
   #TODO: UI allows option of using --human-readable
-  #TODO: UI should provide verbosity config, i.e. -vv instead of -v
-  #TODO: Add rsync over ssh
-  #TODO: In light of using ssh to connect, it could be cool to have profiles like Handbrake
   #TODO: Fix prob: I syned ../M. Ward/Hold Time, and only ../Hold Time gets put
-  #TODO: give option to have rsync log to file using --log-file
   #TODO: consider using --itemize-changes instead of --stats
-  #TODO: consider using --delete to delete files on the source
   	
   #----------------------------------------------------------------------------
-  # Function:		awakeFromNib
+  # Function:		initialize
   #
-  # Purpose:		Sets up UI fields on startup
+  # Purpose:		Initializes objects on startup
   #----------------------------------------------------------------------------
-  def awakeFromNib
-    @source_dir.setStringValue('/Volumes/My Book/Music/iTunes/113')
-    @rsync_module.setStringValue('steve@192.168.10.3::iTunes')
+  def initialize
+    @totalReadData = 0
+    all_done = 1
   end
-	
+  
   #----------------------------------------------------------------------------
   # Function:		doRsync
   #
   # Purpose:		Kicks off the rsync process
   #----------------------------------------------------------------------------
   #TODO: look into decoupling this function into a different, worker class
-  def doRsync(sender)
-    #Log the checkbox value
-    puts "checkbox value = #{@checkbox.state}"
+  def doRsync(args)
+    # Clear the data in @results before we do anything
+    @results.setString ""
     
     #Make sure we're not running
     @task = OSX::NSTask.alloc.init
     
+    # This will move to a different class, once settable in the UI
     #Prepare the command for the task
     @task.setLaunchPath "/opt/local/bin/rsync"
-    
-    #Prepare args for the command
-    args = setupArgs
     puts "launch path = #{@task.launchPath}"
-    args.each {|arg| puts "Got argument '#{arg}"}
+    
+    # Pass the arguments to the task
+    @task.arguments =  args
     
     #Create a new pipe
     @pipe = OSX::NSPipe.alloc.init
@@ -70,42 +60,18 @@ class RsyncController < OSX::NSObject
     fh = @pipe.fileHandleForReading
     
     #Setup observers on the file handle and task
-    #TODO: See if this can be one line... a la .alloc.init.defaultCenter
-    nc = OSX::NSNotificationCenter.alloc.init
-    nc = OSX::NSNotificationCenter.defaultCenter
-    nc.removeObserver(self)
-    nc.addObserver_selector_name_object_(self, 'dataReady:',
+    @nc = OSX::NSNotificationCenter.alloc.init
+    @nc = OSX::NSNotificationCenter.defaultCenter
+    @nc.removeObserver(self)
+    @nc.addObserver_selector_name_object_(self, 'dataReady:',
 				OSX::NSFileHandleReadCompletionNotification,fh)
-    nc.addObserver_selector_name_object_(self, 'taskTerminated:',
+    @nc.addObserver_selector_name_object_(self, 'taskTerminated:',
 				OSX::NSTaskDidTerminateNotification,@task)
     
     #Run it
     @task.launch
     @results.setString "Starting rsync...\n"
     fh.readInBackgroundAndNotify
-  end
-  ib_action :doRsync
-  
-  #----------------------------------------------------------------------------
-  # Function:		setupArgs
-  #
-  # Purpose:		Sets up the cmd task arguments
-  #----------------------------------------------------------------------------
-  def setupArgs
-    #Prepare args for the command
-    args = ['-vrn', '--compress', '--protect-args', '--stats', '--progress',
-	    '--iconv=UTF8-MAC','--human-readable', 
-	    "#{@source_dir.stringValue}", "#{@rsync_module.stringValue}"]
-    
-    #Check if we need a --dry run arg
-    if @checkbox.state.eql?(0)
-      args[0] = '-vr'
-    end
-    
-    #Assign the args to the task
-    @task.setArguments args
-    
-    return args
   end
   
   #----------------------------------------------------------------------------
@@ -122,7 +88,9 @@ class RsyncController < OSX::NSObject
     ts = @results.textStorage
     ts.replaceCharactersInRange_withString(OSX::NSMakeRange(ts.length, 0), s)
     
+    # Release the string, now that we've posted it to the UI
     s.release
+    s = nil
   end
   
   #----------------------------------------------------------------------------
@@ -135,10 +103,11 @@ class RsyncController < OSX::NSObject
     inData = ntf.userInfo.valueForKey(OSX::NSFileHandleNotificationDataItem)
     
     #Log how much data
+    @totalReadData = @totalReadData + inData.length
     puts "dataReady: #{inData.length} bytes"
+    puts "Total read data: #{@totalReadData} bytes"
     
     if inData.length
-      #TODO: if this function is in a different class, this call could just call appendData in this class
       self.appendData(inData)
     end
     
@@ -155,36 +124,10 @@ class RsyncController < OSX::NSObject
   #----------------------------------------------------------------------------
   def taskTerminated(notification)
     #Log that we're ending
-    sendOkAlert
-    puts("taskTerminated:")
+    puts("taskTerminated: #{@task.processIdentifier}")
     
+    # Release the task
     @task.release
     @task = nil
-  end
-  
-  #----------------------------------------------------------------------------
-  # Function:		sendOkAlert
-  #
-  # Purpose:		Pops up a dialog saying we're done
-  #----------------------------------------------------------------------------
-  def sendOkAlert
-    #Set messages according to dry run vs. real run
-    if @checkbox.state.eql?(0)
-      msgTxt 	= "Rsync Successful!"
-      infoTxt 	= "The rsync operation to #{@rsync_module.stringValue} was successful"
-    elsif @checkbox.state.eql?(1)
-      msgTxt 	= "Rsync Dry Run Successful!"
-      infoTxt 	= "The rsync dry run to #{@rsync_module.stringValue} was successful"
-    end
-    
-    #Setup the box
-    alert = OSX::NSAlert.alloc.init
-    alert.setMessageText(msgTxt)
-    alert.setInformativeText(infoTxt)
-    alert.setAlertStyle(OSX::NSInformationalAlertStyle)
-    alert.addButtonWithTitle("Ok")
-    
-    #Do the box!
-    alert.runModal
   end
 end
