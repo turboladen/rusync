@@ -3,7 +3,7 @@
 #  RuSync
 #
 #  Created by Steve Loveless on 2/22/09.
-#  Copyright (c) 2009 Pelco. All rights reserved.
+#  Copyright (c) 2009 Steve Loveless. All rights reserved.
 #
 
 require 'osx/cocoa'

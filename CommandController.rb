@@ -3,7 +3,7 @@
 #  RuSync
 #
 #  Created by Steve Loveless on 3/29/09.
-#  Copyright (c) 2009 Pelco. All rights reserved.
+#  Copyright (c) 2009 Steve Loveless. All rights reserved.
 #
 
 require 'osx/cocoa'
@@ -19,6 +19,11 @@ class CommandController < OSX::NSObject
   # Available actions
   ib_action :sync
   
+  #----------------------------------------------------------------------------
+  # Function:		initialiaze
+  #
+  # Purpose:		Sets up variables when instantiated
+  #----------------------------------------------------------------------------
   def initialize
     @args 
   end
@@ -38,23 +43,23 @@ class CommandController < OSX::NSObject
   #----------------------------------------------------------------------------
   # Function:		setupArgs
   #
-  # Purpose:		Sets up the cmd task arguments
+  # Purpose:		Gets the rsync cmd task arguments from the UI
   #----------------------------------------------------------------------------
   def setupArgs
-    #Log the checkbox value
+    # Log the checkbox value
     puts "dry run checkbox value = #{@dryrun_checkbox.state}"
  
-    #Prepare args for the command
+    # Prepare args for the command
     @args = ['-vvrn', '--compress', '--protect-args', '--stats', '--progress',
 	    '--iconv=UTF8-MAC','--human-readable', '--delete',
 	    "#{@source_dir.stringValue}", "#{@server_module.stringValue}"]
     
-    #Check if we need a --dry run arg
+    # Check if we need a --dry run arg
     if @dryrun_checkbox.state.eql?(0)
       @args[0] = '-vvr'
     end
     
-    #Output each retrieved arg
+    # Returns & outputs each retrieved arg
     @args.each {|@arg| puts "Got argument '#{@arg}'"}
   end
   
@@ -67,10 +72,9 @@ class CommandController < OSX::NSObject
     # Setup the arguments and do the rsync
     @rsync_controller.doRsync(setupArgs)
     
-    #Setup observer on the task
-    # Tell user we're done, whenever we get the notification
+    # Observe the rsync task so we can tell user we're done when it's done
     @rsync_controller.nc.addObserver_selector_name_object_(self, 'sendOkAlert:',
-				OSX::NSTaskDidTerminateNotification,@rsync_controller.task)
+		OSX::NSTaskDidTerminateNotification, @rsync_controller.task)
   end
   
   
@@ -82,7 +86,7 @@ class CommandController < OSX::NSObject
   # Purpose:		Pops up a dialog saying we're done
   #----------------------------------------------------------------------------
   def sendOkAlert(notification)
-    #Set messages according to dry run vs. real run
+    # Set messages according to dry run vs. real run
     if @dryrun_checkbox.state.eql?(0)
       msgTxt 	= "Rsync Completed!"
       infoTxt 	= "The rsync operation to #{@server_module.stringValue} completed"
@@ -91,14 +95,14 @@ class CommandController < OSX::NSObject
       infoTxt 	= "The rsync dry run to #{@server_module.stringValue} completed"
     end
     
-    #Setup the box
+    # Setup the box
     alert = OSX::NSAlert.alloc.init
     alert.setMessageText(msgTxt)
     alert.setInformativeText(infoTxt)
     alert.setAlertStyle(OSX::NSInformationalAlertStyle)
     alert.addButtonWithTitle("Ok")
     
-    #Do the box!
+    # Do the box!
     alert.runModal
   end
 end

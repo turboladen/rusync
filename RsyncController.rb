@@ -3,7 +3,7 @@
 #  RuRsync
 #
 #  Created by Steve Loveless on 2/16/09.
-#  Copyright (c) 2009 Pelco. All rights reserved.
+#  Copyright (c) 2009 Steve Loveless. All rights reserved.
 #
 
 require 'osx/cocoa'
@@ -26,8 +26,7 @@ class RsyncController < OSX::NSObject
   # Purpose:		Initializes objects on startup
   #----------------------------------------------------------------------------
   def initialize
-    @totalReadData = 0
-    all_done = 1
+    @totalReadData = 0		# variable for counting bytes read from rsync
   end
   
   #----------------------------------------------------------------------------
@@ -35,31 +34,29 @@ class RsyncController < OSX::NSObject
   #
   # Purpose:		Kicks off the rsync process
   #----------------------------------------------------------------------------
-  #TODO: look into decoupling this function into a different, worker class
   def doRsync(args)
     # Clear the data in @results before we do anything
     @results.setString ""
     
-    #Make sure we're not running
+    # Make sure we're not running
     @task = OSX::NSTask.alloc.init
     
-    # This will move to a different class, once settable in the UI
-    #Prepare the command for the task
+    # Prepare the command for the task
     @task.setLaunchPath "/opt/local/bin/rsync"
     puts "launch path = #{@task.launchPath}"
     
     # Pass the arguments to the task
     @task.arguments =  args
     
-    #Create a new pipe
+    # Create a new pipe
     @pipe = OSX::NSPipe.alloc.init
     @task.setStandardOutput @pipe
     
-    #Pass the pipe to a file handle
+    # Pass the pipe to a file handle
     fh = OSX::NSFileHandle.alloc.init
     fh = @pipe.fileHandleForReading
     
-    #Setup observers on the file handle and task
+    # Setup observers on the file handle and task
     @nc = OSX::NSNotificationCenter.alloc.init
     @nc = OSX::NSNotificationCenter.defaultCenter
     @nc.removeObserver(self)
@@ -68,9 +65,13 @@ class RsyncController < OSX::NSObject
     @nc.addObserver_selector_name_object_(self, 'taskTerminated:',
 				OSX::NSTaskDidTerminateNotification,@task)
     
-    #Run it
+    # Run it
     @task.launch
+    
+    # Tell users we're starting 
     @results.setString "Starting rsync...\n"
+    
+    # Start notification for when rsync output data is ready to send to the UI
     fh.readInBackgroundAndNotify
   end
   
@@ -80,10 +81,10 @@ class RsyncController < OSX::NSObject
   # Purpose:		Posts data back to the UI, once fed
   #----------------------------------------------------------------------------
   def appendData(data)
-    #get the data to a string
+    # Get the data to a string
     s = OSX::NSString.alloc.initWithData_encoding(data,OSX::NSUTF8StringEncoding)
     
-    #Prep the data to push back to the UI
+    # Prep the data to push back to the UI
     ts = OSX::NSTextStorage.alloc.init
     ts = @results.textStorage
     ts.replaceCharactersInRange_withString(OSX::NSMakeRange(ts.length, 0), s)
@@ -99,19 +100,20 @@ class RsyncController < OSX::NSObject
   # Purpose:		Sends the cmd task return data to the UI post method
   #----------------------------------------------------------------------------
   def dataReady(ntf)
-    #Read the data in
+    # Read the data in
     inData = ntf.userInfo.valueForKey(OSX::NSFileHandleNotificationDataItem)
     
-    #Log how much data
+    # Log how much data we're reading now and overall how much we've read
     @totalReadData = @totalReadData + inData.length
     puts "dataReady: #{inData.length} bytes"
     puts "Total read data: #{@totalReadData} bytes"
     
+    # Send the data off to the UI
     if inData.length
       self.appendData(inData)
     end
     
-    #If the task is running, start reading again
+    # If the task is running, start reading again
     if (@task)
       @pipe.fileHandleForReading.readInBackgroundAndNotify
     end
@@ -123,7 +125,7 @@ class RsyncController < OSX::NSObject
   # Purpose:		Ends the cmd task and cleans up
   #----------------------------------------------------------------------------
   def taskTerminated(notification)
-    #Log that we're ending
+    # Log that we're ending
     puts("taskTerminated: #{@task.processIdentifier}")
     
     # Release the task
