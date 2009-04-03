@@ -89,6 +89,9 @@ class RsyncController < OSX::NSObject
     ts = @results.textStorage
     ts.replaceCharactersInRange_withString(OSX::NSMakeRange(ts.length, 0), s)
     
+    # Auto-scroll to the botton of the NSTextView
+    @results.scrollRangeToVisible(OSX::NSMakeRange(ts.length, 0))
+    
     # Release the string, now that we've posted it to the UI
     s.release
     s = nil
