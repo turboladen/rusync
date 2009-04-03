@@ -70,6 +70,8 @@ class RsyncController < OSX::NSObject
     
     # Tell users we're starting 
     @results.setString "Starting rsync...\n"
+    @time_start = Time.now
+    @results.textStorage.mutableString.appendString "Start time: #{@time_start.strftime("%H:%M:%S")}\n"
     
     # Start notification for when rsync output data is ready to send to the UI
     fh.readInBackgroundAndNotify
@@ -134,5 +136,10 @@ class RsyncController < OSX::NSObject
     # Release the task
     @task.release
     @task = nil
+    
+    # Output to UI the time summary
+    @time_end = Time.now
+    @results.textStorage.mutableString.appendString "End time: #{@time_end.strftime("%H:%M:%S")}\n"
+    @results.textStorage.mutableString.appendString "Duration: #{@time_end - @time_start} seconds\n"
   end
 end
