@@ -10,8 +10,10 @@ require 'osx/cocoa'
 
 class CommandController < OSX::NSObject
   # UI outlets
-  ib_outlets :source_dir, :server_module, :dryrun_checkbox
-  attr_reader :args
+  ib_outlets :source_dir, :rsync_user, :rsync_server, :server_module,
+    :dryrun_checkbox 
+	
+  attr_reader :args, :destination
   
   # Controller outlets
   ib_outlets :rsync_controller
@@ -35,9 +37,12 @@ class CommandController < OSX::NSObject
   #----------------------------------------------------------------------------
   def awakeFromNib
     #@source_dir.setStringValue('/Volumes/My Book/Music/iTunes/*')
-    #@server_module.setStringValue('steve@segue.gotdns.org::iTunes')
     @source_dir.setStringValue('/Users/sloveless/tmp/')
-    @server_module.setStringValue('steve@192.168.10.3::test')
+    @rsync_user.setStringValue('steve')
+    @rsync_server.setStringValue('192.168.10.3')
+    #@rsync_server.setStringValue('segue.gotdns.org')
+    @server_module.setStringValue('test')
+    #@server_module.setStringValue('iTunes')
   end
 	
   #----------------------------------------------------------------------------
@@ -48,11 +53,14 @@ class CommandController < OSX::NSObject
   def setupArgs
     # Log the checkbox value
     puts "dry run checkbox value = #{@dryrun_checkbox.state}"
+    
+    # Make the destination string
+    @destination = "#{@rsync_user.stringValue}@#{@rsync_server.stringValue}::#{@server_module.stringValue}"
  
     # Prepare args for the command
     @args = ['-vvrn', '--compress', '--protect-args', '--stats', '--progress',
 	    '--iconv=UTF8-MAC','--human-readable', '--delete',
-	    "#{@source_dir.stringValue}", "#{@server_module.stringValue}"]
+	    "#{@source_dir.stringValue}", "#{@destination}"]
     
     # Check if we need a --dry run arg
     if @dryrun_checkbox.state.eql?(0)
@@ -89,10 +97,10 @@ class CommandController < OSX::NSObject
     # Set messages according to dry run vs. real run
     if @dryrun_checkbox.state.eql?(0)
       msgTxt 	= "Rsync Completed!"
-      infoTxt 	= "The rsync operation to #{@server_module.stringValue} completed"
+      infoTxt 	= "The rsync operation to #{@destination} completed"
     elsif @dryrun_checkbox.state.eql?(1)
       msgTxt 	= "Rsync Dry Run Completed!"
-      infoTxt 	= "The rsync dry run to #{@server_module.stringValue} completed"
+      infoTxt 	= "The rsync dry run to #{@destination} completed"
     end
     
     # Setup the box
