@@ -10,10 +10,10 @@ require 'osx/cocoa'
 
 class CommandController < OSX::NSObject
   # UI outlets
-  ib_outlets :source_dir, :rsync_user, :rsync_server, :server_module,
+  ib_outlets :source_dir, :rsync_user, :rsync_server, :rsync_module,
     :dryrun_checkbox 
 	
-  attr_reader :args, :destination, :source_string
+  attr_reader :args, :action_type, :destination, :source_string
   
   # Controller outlets
   ib_outlets :rsync_controller
@@ -21,6 +21,7 @@ class CommandController < OSX::NSObject
   # Available actions
   ib_action :sync
   ib_action :chooseSource
+  ib_action :getModuleList
   
   #----------------------------------------------------------------------------
   # Function:		initialiaze
@@ -28,7 +29,9 @@ class CommandController < OSX::NSObject
   # Purpose:		Sets up variables when instantiated
   #----------------------------------------------------------------------------
   def initialize
-    @args 
+    @args = Array.new
+    @action_type = {"module" => 0,
+		    "sync" => 1}
   end
   
   #----------------------------------------------------------------------------
@@ -42,8 +45,8 @@ class CommandController < OSX::NSObject
     @rsync_user.setStringValue('steve')
     @rsync_server.setStringValue('192.168.10.3')
     #@rsync_server.setStringValue('segue.gotdns.org')
-    @server_module.setStringValue('test')
-    #@server_module.setStringValue('iTunes')
+    @rsync_module.setStringValue('test')
+    #@rsync_module.setStringValue('iTunes')
   end
 	
   #----------------------------------------------------------------------------
@@ -71,31 +74,47 @@ class CommandController < OSX::NSObject
     end
   end
   
-  
   #----------------------------------------------------------------------------
   # Function:		setupArgs
   #
   # Purpose:		Gets the rsync cmd task arguments from the UI
   #----------------------------------------------------------------------------
-  def setupArgs
-    # Log the checkbox value
-    puts "dry run checkbox value = #{@dryrun_checkbox.state}"
-    
-    # Make the destination string
-    @destination = "#{@rsync_user.stringValue}@#{@rsync_server.stringValue}::#{@server_module.stringValue}"
- 
-    # Prepare args for the command
-    @args = ['-vvrn', '--compress', '--protect-args', '--stats', '--progress',
-	    '--iconv=UTF8-MAC','--human-readable', '--delete',
-	    "#{@source_dir.stringValue}", "#{@destination}"]
-    
-    # Check if we need a --dry run arg
-    if @dryrun_checkbox.state.eql?(0)
-      @args[0] = '-vvr'
+  def setupArgs(action)
+    # Setup args based on rsync action type
+    if action.eql?(@action_type['modules'])
+      # Prepare the args for the command
+      @args = ["#{@rsync_user.stringValue}@#{@rsync_server.stringValue}::"]
+      
+    elsif action.eql?(@action_type['sync'])
+      # Log the checkbox value
+      puts "dry run checkbox value = #{@dryrun_checkbox.state}"
+      
+      # Make the destination string
+      @destination = "#{@rsync_user.stringValue}@#{@rsync_server.stringValue}::#{@rsync_module.stringValue}"
+   
+      # Prepare args for the command
+      @args = ['-vvrn', '--compress', '--protect-args', '--stats', '--progress',
+	      '--iconv=UTF8-MAC','--human-readable', '--delete',
+	      "#{@source_dir.stringValue}", "#{@destination}"]
+      
+      # Check if we need a --dry run arg
+      if @dryrun_checkbox.state.eql?(0)
+	@args[0] = '-vvr'
+      end
     end
     
     # Returns & outputs each retrieved arg
     @args.each {|@arg| puts "Got argument '#{@arg}'"}
+  end
+  
+  #----------------------------------------------------------------------------
+  # Function:		getModuleList
+  #
+  # Purpose:		Lets the user choose rsycn server module from a dialog
+  #----------------------------------------------------------------------------
+  def getModuleList
+    # Setup the arguments and do the rsync
+    @rsync_controller.doRsync(setupArgs(@action_type['modules']))
   end
   
   #----------------------------------------------------------------------------
@@ -105,7 +124,7 @@ class CommandController < OSX::NSObject
   #----------------------------------------------------------------------------
   def sync
     # Setup the arguments and do the rsync
-    @rsync_controller.doRsync(setupArgs)
+    @rsync_controller.doRsync(setupArgs(@action_type['sync']))
     
     # Observe the rsync task so we can tell user we're done when it's done
     @rsync_controller.nc.addObserver_selector_name_object_(self, 'sendOkAlert:',

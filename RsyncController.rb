@@ -27,6 +27,7 @@ class RsyncController < OSX::NSObject
   #----------------------------------------------------------------------------
   def initialize
     @totalReadData = 0		# variable for counting bytes read from rsync
+    @rsync_path = "/opt/local/bin/rsync"
   end
   
   #----------------------------------------------------------------------------
@@ -42,7 +43,7 @@ class RsyncController < OSX::NSObject
     @task = OSX::NSTask.alloc.init
     
     # Prepare the command for the task
-    @task.setLaunchPath "/opt/local/bin/rsync"
+    @task.setLaunchPath @rsync_path
     puts "launch path = #{@task.launchPath}"
     
     # Pass the arguments to the task
@@ -68,7 +69,7 @@ class RsyncController < OSX::NSObject
     # Run it
     @task.launch
     
-    # Tell users we're starting 
+    # Tell users we're starting
     @results.setString "Starting rsync...\n"
     @time_start = Time.now
     @results.textStorage.mutableString.appendString "Start time: #{@time_start.strftime("%H:%M:%S")}\n"
