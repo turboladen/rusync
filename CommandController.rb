@@ -13,13 +13,14 @@ class CommandController < OSX::NSObject
   ib_outlets :source_dir, :rsync_user, :rsync_server, :server_module,
     :dryrun_checkbox 
 	
-  attr_reader :args, :destination
+  attr_reader :args, :destination, :source_string
   
   # Controller outlets
   ib_outlets :rsync_controller
   
   # Available actions
   ib_action :sync
+  ib_action :chooseSource
   
   #----------------------------------------------------------------------------
   # Function:		initialiaze
@@ -45,6 +46,32 @@ class CommandController < OSX::NSObject
     #@server_module.setStringValue('iTunes')
   end
 	
+  #----------------------------------------------------------------------------
+  # Function:		chooseSource
+  #
+  # Purpose:		Lets the user choose file/dir from a dialog
+  #----------------------------------------------------------------------------
+  def chooseSource
+    # Create the File Open Dialog class
+    openDlg = OSX::NSOpenPanel.openPanel
+
+    # Enable the selection of files in the dialog
+    openDlg.setCanChooseFiles(true)
+
+    # Enable the selection of directories in the dialog
+    openDlg.setCanChooseDirectories(true)
+
+    # Display the dialog.  If the OK button was pressed, process the files
+    if (openDlg.runModalForDirectory_file(nil, nil).eql?(OSX::NSOKButton))
+      # Get an array of filename of file or directory selected
+      source = openDlg.filenames
+
+      # Loop through all the files and process them.
+      @source_dir.stringValue = source.objectAtIndex(0)
+    end
+  end
+  
+  
   #----------------------------------------------------------------------------
   # Function:		setupArgs
   #
@@ -84,9 +111,6 @@ class CommandController < OSX::NSObject
     @rsync_controller.nc.addObserver_selector_name_object_(self, 'sendOkAlert:',
 		OSX::NSTaskDidTerminateNotification, @rsync_controller.task)
   end
-  
-  
-  
   
   #----------------------------------------------------------------------------
   # Function:		sendOkAlert
