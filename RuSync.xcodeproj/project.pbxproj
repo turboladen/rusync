@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1468DB950F5232E200F72255 /* RsyncController.rb in Resources */ = {isa = PBXBuildFile; fileRef = 1468DB940F5232E200F72255 /* RsyncController.rb */; };
+		1495800C0FB7D1A0002744D1 /* rusync.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1495800B0FB7D1A0002744D1 /* rusync.icns */; };
 		14C33FEC0F80423E00F313D0 /* CommandController.rb in Resources */ = {isa = PBXBuildFile; fileRef = 14C33FEB0F80423E00F313D0 /* CommandController.rb */; };
 		4DDCA7060ACC9A6100E082CE /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		4DDCA7070ACC9A6100E082CE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -21,6 +22,7 @@
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1468DB940F5232E200F72255 /* RsyncController.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = RsyncController.rb; sourceTree = "<group>"; };
+		1495800B0FB7D1A0002744D1 /* rusync.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = rusync.icns; sourceTree = "<group>"; };
 		14C33FEB0F80423E00F313D0 /* CommandController.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = CommandController.rb; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
@@ -48,6 +50,8 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				1468DB940F5232E200F72255 /* RsyncController.rb */,
+				14C33FEB0F80423E00F313D0 /* CommandController.rb */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -64,6 +68,7 @@
 		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1495800B0FB7D1A0002744D1 /* rusync.icns */,
 				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
 				29B97324FDCFA39411CA2CEA /* AppKit.framework */,
 			);
@@ -81,14 +86,12 @@
 		29B97314FDCFA39411CA2CEA /* RuSync */ = {
 			isa = PBXGroup;
 			children = (
-				1468DB940F5232E200F72255 /* RsyncController.rb */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				4DDCA7110ACC9A6100E082CE /* Info.plist */,
-				14C33FEB0F80423E00F313D0 /* CommandController.rb */,
 			);
 			name = RuSync;
 			sourceTree = "<group>";
@@ -179,6 +182,7 @@
 				4DDCA7080ACC9A6100E082CE /* rb_main.rb in Resources */,
 				1468DB950F5232E200F72255 /* RsyncController.rb in Resources */,
 				14C33FEC0F80423E00F313D0 /* CommandController.rb in Resources */,
+				1495800C0FB7D1A0002744D1 /* rusync.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,13 +232,14 @@
 		4D7A7B590ABF745500C2D4C0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
+				ARCHS = "$(NATIVE_ARCH)";
+				CURRENT_PROJECT_VERSION = 0.1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
 		};

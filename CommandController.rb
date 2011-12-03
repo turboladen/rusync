@@ -69,7 +69,7 @@ class CommandController < OSX::NSObject
       # Get an array of filename of file or directory selected
       source = openDlg.filenames
 
-      # Loop through all the files and process them.
+      # Just get the first file in the list to process
       @source_dir.stringValue = source.objectAtIndex(0)
     end
   end
@@ -99,7 +99,7 @@ class CommandController < OSX::NSObject
       
       # Check if we need a --dry run arg
       if @dryrun_checkbox.state.eql?(0)
-	@args[0] = '-vvr'
+				@args[0] = '-vvr'
       end
     end
     
@@ -110,7 +110,7 @@ class CommandController < OSX::NSObject
   #----------------------------------------------------------------------------
   # Function:		getModuleList
   #
-  # Purpose:		Lets the user choose rsycn server module from a dialog
+  # Purpose:		Lets the user choose rsync server module from a dialog
   #----------------------------------------------------------------------------
   def getModuleList
     # Setup the arguments and do the rsync
@@ -128,7 +128,7 @@ class CommandController < OSX::NSObject
     
     # Observe the rsync task so we can tell user we're done when it's done
     @rsync_controller.nc.addObserver_selector_name_object_(self, 'sendOkAlert:',
-		OSX::NSTaskDidTerminateNotification, @rsync_controller.task)
+			OSX::NSTaskDidTerminateNotification, @rsync_controller.task)
   end
   
   #----------------------------------------------------------------------------

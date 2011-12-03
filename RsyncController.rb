@@ -47,7 +47,7 @@ class RsyncController < OSX::NSObject
     puts "launch path = #{@task.launchPath}"
     
     # Pass the arguments to the task
-    @task.arguments =  args
+    @task.arguments = args
     
     # Create a new pipe
     @pipe = OSX::NSPipe.alloc.init
@@ -62,9 +62,9 @@ class RsyncController < OSX::NSObject
     @nc = OSX::NSNotificationCenter.defaultCenter
     @nc.removeObserver(self)
     @nc.addObserver_selector_name_object_(self, 'dataReady:',
-				OSX::NSFileHandleReadCompletionNotification,fh)
+				OSX::NSFileHandleReadCompletionNotification, fh)
     @nc.addObserver_selector_name_object_(self, 'taskTerminated:',
-				OSX::NSTaskDidTerminateNotification,@task)
+				OSX::NSTaskDidTerminateNotification, @task)
     
     # Run it
     @task.launch
